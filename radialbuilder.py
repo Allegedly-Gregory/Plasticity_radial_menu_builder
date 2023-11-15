@@ -14,18 +14,67 @@ class RadialMenuBuilder:
         self.menu_config["command"] = f"{title}:menu"
 
     def add_slice(self, command, label):
-        icon = str(command[8:])
-        # label = str(command[8:]).replace(":", "-")
+        if command.startswith("command:"): 
+            icon = str(command[8:])
+        elif command.startswith("edit:"): 
+            icon = str(command[5:])
+        elif command.startswith("file:"): 
+            icon = str(command[5:]) 
+        elif command.startswith("selection:convert:"): 
+            icon = str(command[18:])
+        elif command.startswith("selection:mode:set:"): 
+            icon = str(command[19:])
+        elif command.startswith("selection:toggle:"): 
+            icon = str(command[17:])
+        elif command.startswith("snaps:"): 
+            icon = str(command[6:])
+        elif command.startswith("view:radial:selection:"): 
+            icon = str(command[22:])
+        elif command.startswith("view:radial:viewport:"): 
+            icon = str(command[21:])
+        elif command.startswith("view:sidebar:"): 
+            icon = str(command[13:])
+        elif command.startswith("viewport:"): 
+            icon = str(command[9:])
+        elif command.startswith("viewport:cplane:"): 
+            icon = str(command[16:])
+        elif command.startswith("viewport:grid:"): 
+            icon = str(command[14:])
+        elif command.startswith("viewport:navigate:"): 
+            icon = str(command[18:])
+
         slice_config = {
             "command": command,
             "icon": icon,
             "label": label
         }
         self.menu_config["items"].append(slice_config)
-
+        
+        
     def generate_label(self, command):
-        words = [word.capitalize() for word in command[8:].split('-')]
-        return ' '.join(words)
+        prefix = None
+
+        if command.startswith("command:"):
+            prefix = "command:"
+        elif command.startswith("edit:"):
+            prefix = "edit:"
+        elif command.startswith("file:"):
+            prefix = "file:"
+        elif command.startswith("selection:"):
+            prefix = "selection:"
+        elif command.startswith("snaps:"):
+            prefix = "snaps:"
+        elif command.startswith("view:"):
+            prefix = "view:"
+        elif command.startswith("viewport:"):
+            prefix = "viewport:"
+
+        if prefix:
+            words = [word.capitalize() for word in command[len(prefix):].split('-')]
+            return ' '.join(words)  
+        else: 
+            words = [word.capitalize() for word in command.split('-')]
+            return ' '.join(words)
 
     def export_to_json(self):
         if not self.menu_config["name"]:
